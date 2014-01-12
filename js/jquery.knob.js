@@ -110,6 +110,7 @@
                     fontWeight: this.$.data('font-weight') || 'bold',
                     inline : false,
                     step : this.$.data('step') || 1,
+                    fgGradient: this.$.data("fgGradient") || null,
 
                     // Hooks
                     draw : null, // function () {}
@@ -740,13 +741,43 @@
             }
 
             c.beginPath();
-                c.strokeStyle = r ? this.o.fgColor : this.fgColor ;
+                c.strokeStyle = this.o.fgGradient ? this.calcFgGradient() : r ? this.o.fgColor : this.fgColor;
                 c.arc(this.xy, this.xy, this.radius, sat - 0.00001, eat + 0.00001, false);
             c.stroke();
         };
 
         this.cancel = function () {
             this.val(this.v);
+        };
+
+        this.calcFgGradient = function() {
+            if (!this.o.fgGradient) {
+                return null;
+            }
+
+            // Use cached gradient if exists   TODO - do we need this optimization?
+            if (this.fgGradient) {
+                return this.fgGradient;
+            }
+
+            var gradientProps = this.o.fgGradient,
+                width = this.$c.width(),
+                height = this.$c.height(),
+                x0 = gradientProps.x0 === "left" ? 0 : gradientProps.x0 === "right" ? width : gradientProps.x0,
+                x1 = gradientProps.y0 === "top" ? 0 : gradientProps.y0 === "bottom" ? height : gradientProps.y0,
+                y0 = gradientProps.x1 === "left" ? 0 : gradientProps.x1 === "right" ? width : gradientProps.x1,
+                y1 = gradientProps.y1 === "top" ? 0 : gradientProps.y1 === "bottom" ? height : gradientProps.y1,
+                gradient = this.c.createLinearGradient(x0, y0, x1, y1)
+            ;
+
+            if (gradientProps.colorStops) {
+                for (var stop in gradientProps.colorStops) {
+                    gradient.addColorStop(stop, gradientProps.colorStops[stop]);
+                }
+            }
+
+            this.fgGradient = gradient;
+            return this.fgGradient;
         };
     };
 
