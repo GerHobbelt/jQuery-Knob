@@ -71,8 +71,8 @@
                     max : this.$.data('max') !== undefined ? this.$.data('max') : 300,
 
                     lineWidth : (this.$.data('lineWidth') && Math.max(Math.min(this.$.data('lineWidth'), 1), 0.01)) || 2,
-                    width : this.$.data('width') || 200,
-                    height : this.$.data('height') || 200,
+                    width : this.$.data('width') || 150,
+                    height : this.$.data('height') || 150,
                     font: this.$.data('font') || 'Arial',
                     fontWeight: this.$.data('font-weight') || 'bold',
                     inline : false,
@@ -302,7 +302,7 @@
                         ,'height' : ((this.w / 3) >> 0) + 'px'
                         ,'position' : 'absolute'
                         ,'vertical-align' : 'middle'
-                        ,'margin-top' : ((this.w / 3 + 12) >> 0) + 'px'
+                        ,'margin-top' : ((this.w / 2 - this.w / len / 2 - 2) >> 0) + 'px'
                         ,'margin-left' : '-' + ((this.w * 3 / 4 + 2) >> 0) + 'px'
                         ,'border' : 0
                         ,'background' : 'none'
