@@ -179,29 +179,21 @@
 
         this.taps = [];
         this.calculateTempo = function(){
-          var len = self.taps.length;
           var current = (new Date()).getTime();
 
-          if(len == 0 || len == 1){
-            self.taps.push(current);
-            return false;
-          }
-
-          var lastTap = self.taps[len - 1];
-          // 6 sec
-          if((current - lastTap) > 6000 ){
+          var len = self.taps.length;
+          var lastTap = self.taps[len - 1] || 0;
+          if((current - lastTap) > 4000 ){ // 4 sec
             self.taps = [];
-            self.taps.push(current);
-            return false;
-          }
-
-          // we don't want to crew too many taps, trim them off
-          if(len > 16){
-            var diff = len - 8;
-            self.taps.splice(0, diff);
+            len = 0;
           }
           self.taps.push(current);
-          len = self.taps.length;
+          len += 1;
+
+          if(len < 4){
+            self.$.text('...'.slice(0, len));
+            return false;
+          }
 
           var _tap = self.taps[0];
           var interval = 0;
@@ -215,11 +207,20 @@
           interval = interval > self.options.max ? self.options.max : interval;
           interval = interval < self.options.min ? self.options.min : interval;
 
-          // notify
-          self.val = interval;
-          self.$.text(interval);
-          // call back hook
-          if (self.options.change) self.options.change(self.val);
+          // set the new temp every 4 taps
+          // lot of consideration, e.g. the performace when combined with several timer on the same page
+          var mod = len % 4;
+          if(mod == 0){
+            self.val = interval;
+            self.$.text(interval);
+            if (self.options.change) self.options.change(self.val); // call back hook
+          }
+
+          // we don't want to crew too many taps, trim them off
+          // otherwise potential mem leak
+          if(len > 16){
+            self.taps.splice(0, 4);
+          }
         };
 
         this._listen = function () {
