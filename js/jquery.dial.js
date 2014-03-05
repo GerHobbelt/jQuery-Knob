@@ -81,10 +81,12 @@
                     font: this.$.data('font') || 'Arial',
                     fontWeight: this.$.data('font-weight') || 'bold',
                     inline : false,
-                    step : this.$.data('step') || 1,
 
                     dialColor : this.$.data('dialcolor') || '#1184D3',
-                    fgColor : this.$.data('fgcolor') || '#13917F'
+                    fgColor : this.$.data('fgcolor') || '#13917F',
+
+                    step : this.$.data('step') || 1,
+                    precision : this.$.data('precision') || 0,
                 }, this.options );
 
             this.span = this.$;
@@ -317,14 +319,17 @@
         };
 
         this.dialTempo = function (v) {
+            var tmp = this.val;
             if(v > this.cv){
-                this.val++;
-                this.val = this.val > this.options.max ? this.options.max : this.val;
+                tmp += this.options.step;
+                tmp = tmp > this.options.max ? this.options.max : tmp;
             } else {
-                this.val--;
-                this.val = this.val < this.options.min ? this.options.min : this.val;
+                tmp -= this.options.step;
+                tmp = tmp < this.options.min ? this.options.min : tmp;
             }
             this.cv = v;
+
+            this.val = parseFloat(tmp.toFixed(this.options.precision));
             this.$.text(this.val);
         };
 

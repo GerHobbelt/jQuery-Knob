@@ -7,7 +7,7 @@
         <script>
             $(function($) {
               var dial = $(".dial").dial({change : function (v) { $('.ival').html(v); } })
-              dial.tempo(100);
+              dial.tempo(0.5);
             });
         </script>
         <style>
@@ -27,7 +27,8 @@
       <div class="demo" style="height:440px;width:300px">
         <p>&#215; Infinite || iPod click wheel</p>
         <div style="float:left;width:200px;height:200px;padding:20px;background-color:#EEEEEE;text-align:center;">
-          <span class="dial"></span>
+          <span class="dial" data-min="0.001" data-max="1" data-step="0.001" data-precision="3"></span>
+          <!-- span class="dial"></span -->
         </div>
         <div>
           <div class="ival" style="width:80px;text-align:center;font-size:50px;color:#AAA">0</div>
