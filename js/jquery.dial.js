@@ -350,10 +350,13 @@
     };
 
     $.fn.dial = function (options) {
-        var dial = new k.Dial(options);
-        dial.$ = $(this);
-        dial.run();
-        return dial;
+      return this.each(
+          function(){
+            var d = new k.Dial(options);
+            d.$ = $(this);
+            d.run();
+          }
+      ).parent();
     };
 
 })(jQuery);
