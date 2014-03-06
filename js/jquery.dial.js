@@ -62,7 +62,6 @@
         this.h = 0; // canvas height
         this.canvas = null; // jQuery canvas element
         this.ctx = null; // rendered canvas context
-        this.$div = null; // component div
 
         this.t = 0; // touches index
 
@@ -82,8 +81,8 @@
                     fontWeight: this.$.data('font-weight') || 'bold',
                     inline : false,
 
-                    dialColor : this.$.data('dialcolor') || '#1184D3',
-                    fgColor : this.$.data('fgcolor') || '#13917F',
+                    dialColor : this.$.data('dialcolor') || '#CC0073',
+                    fgColor : this.$.data('fgcolor') || '#1184D3',
 
                     step : this.$.data('step') || 1,
                     precision : this.$.data('precision') || 0,
@@ -98,13 +97,70 @@
             });
 
             // wraps all elements in a div add to DOM before Canvas init is triggered
-            this.$div = $('<div style="'
-                + (this.options.inline ? 'display:inline;' : '')
-                + 'width:' + this.options.width + 'px;height:' + this.options.height + 'px;'
-                + '"></div>');
+            // shamelessly stealed the *css* from http://www.htmlfivewow.com/demos/hal/index.html
+            // modified a bit to suit my needs.
+            // <!--
+            // Copyright 2011 Google Inc.
+            //
+            // Licensed under the Apache License, Version 2.0 (the "License");
+            // you may not use this file except in compliance with the License.
+            // You may obtain a copy of the License at
+            //
+            //      http://www.apache.org/licenses/LICENSE-2.0
+            //
+            //      Unless required by applicable law or agreed to in writing, software
+            //      distributed under the License is distributed on an "AS IS" BASIS,
+            //      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+            //      See the License for the specific language governing permissions and
+            //      limitations under the License.
+            //
+            //      Author: Eric Bidelman (ericbidelman@chromium.org)
+            // -->
+            var hal = $('<div style="'
+                + (this.options.inline ? 'display:inline;' : 'display:block;')
+                + 'width:' +(this.options.width + 30)+ 'px;height:' +(this.options.height + 30) + 'px;'
+                + 'background: -webkit-linear-gradient(left, transparent, #fff 40%, #fff 45%, #fff 55%, #fff 60%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), #3c3734;'
+                + 'background-size: 75% 50%, 50% 100%, 50% 100%, 100% 100%;'
+                + 'background-position: 50% top, right -50px, left -50px, 50% 50%;'
+                + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
+                + 'display: -webkit-box;'
+                + '-webkit-box-align: center;'
+                + '-webkit-box-pack: center;'
+                + 'box-shadow: 0 5px 20px black;'
+                + 'border-radius: 50%;">'
+                + '</div>');
 
-            this.$.wrap(this.$div).before(this.canvas);
-            this.$div = this.$.parent();
+            var inner1 = $('<div id="inner1" style="'
+                + 'background: -webkit-linear-gradient(left, transparent, transparent 32%, white 45%, white 50%, white 55%, transparent 68%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(top, #b5a5a8, #92807e);'
+                + 'background-size: 100% 50%, 50% 100%, 50% 100%, 100% 100%;'
+                + 'background-position: 50% bottom, left 50px, right 50px, center center;'
+                + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
+                + 'width: 95%;'
+                + 'height: 95%;'
+                + '-webkit-box-pack: center;'
+                + '-webkit-box-align: center;'
+                + 'display: -webkit-box;'
+                + 'border-radius: 50%;">'
+                + '</div>');
+
+            var inner2 = $('<div id="inner2" style="'
+                + 'width: 90%;'
+                + 'height: 91%;'
+                + 'background: -webkit-radial-gradient(50% 50%, circle, #2795f6, #0072fd 5%, #413bd4 20%,  #440003 45%, black 63%);'
+                + 'background-repeat: no-repeat, no-repeat, no-repeat;'
+                + 'background-size: 76% 100%, 55% 100%, 100%, 100%;'
+                + 'background-position: 50% 12%, 27% 8px, center center;'
+                + 'overflow: hidden;'
+                + 'background-color: black;'
+                + '-webkit-box-pack: center;'
+                + '-webkit-box-align: center;'
+                + 'display: -webkit-box;'
+                + 'border-radius: 50%;">'
+                + '</div>');
+
+            this.$.wrap(inner2).before(this.canvas);
+            $("#inner2").wrap(inner1);
+            $("#inner1").wrap(hal);
 
             this.ctx = this.canvas[0].getContext ? this.canvas[0].getContext('2d') : null;
 
@@ -295,19 +351,19 @@
             this.lineWidth = this.options.lineWidth;
             this.radius = this.xy - this.lineWidth / 2;
 
-            var len = Math.max(String(Math.abs(this.options.max)).length, String(Math.abs(this.options.min)).length, 2) + 2;
+            var len = Math.max(String(Math.abs(this.options.max)).length, String(Math.abs(this.options.min)).length, 2) + 3;
             this.span.css({
                         'width' : ((this.w / 2 + 4) >> 0) + 'px'
                         ,'height' : ((this.w / 3) >> 0) + 'px'
                         ,'position' : 'absolute'
                         ,'vertical-align' : 'middle'
-                        ,'margin-top' : ((this.w / 2 - this.w / len / 2 - 2) >> 0) + 'px'
+                        ,'margin-top' : ((this.w / 2 - this.w / len / 2 + 1) >> 0) + 'px'
                         ,'margin-left' : '-' + ((this.w * 3 / 4 + 2) >> 0) + 'px'
                         ,'border' : 0
                         ,'background' : 'none'
                         ,'font' : this.options.fontWeight + ' ' + ((this.w / len) >> 0) + 'px ' + this.options.font
                         ,'text-align' : 'center'
-                        ,'color' : this.options.fgColor
+                        ,'color' : "#fd0d00"//this.options.fgColor
                         ,'padding' : '0px'
                         ,'-webkit-appearance': 'none'
                         ,'-webkit-user-select': 'none' // do not select when double click/tap
@@ -341,22 +397,19 @@
             c.fillStyle = fillColor || this.options.fgColor;
 
             c.beginPath();
-              c.arc(this.xy, this.xy, this.radius, 0, this.PI2, false);
+              c.arc(this.xy, this.xy + 1, this.radius, 0, this.PI2, false);
               c.moveTo(this.xy + r2, this.xy);
-              c.arc(this.xy, this.xy, r2, this.PI2, 0, true);
+              c.arc(this.xy, this.xy + 1, r2, this.PI2, 0, true);
             c.stroke();
             c.fill();
         };
     };
 
     $.fn.dial = function (options) {
-      return this.each(
-          function(){
-            var d = new k.Dial(options);
-            d.$ = $(this);
-            d.run();
-          }
-      ).parent();
+        var dial = new k.Dial(options);
+        dial.$ = $(this);
+        dial.run();
+        return dial;
     };
 
 })(jQuery);

@@ -10,29 +10,13 @@
               dial.tempo(0.5);
             });
         </script>
-        <style>
-            body{
-              padding: 0;
-              margin: 0px 50px;
-              font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-              font-weight: 300;
-              text-rendering: optimizelegibility;
-            }
-            p{font-size: 30px; line-height: 30px}
-            div.demo{text-align: center; width: 280px; float: left}
-            div.demo > p{font-size: 20px}
-        </style>
     </head>
     <body>
-      <div class="demo" style="height:440px;width:300px">
-        <p>&#215; Infinite || iPod click wheel</p>
-        <div style="float:left;width:200px;height:200px;padding:20px;background-color:#EEEEEE;text-align:center;">
-          <span class="dial" data-min="0.001" data-max="1" data-step="0.001" data-precision="3"></span>
-          <!-- span class="dial"></span -->
-        </div>
+        <p>iPod click wheel</p>
+        <span class="dial" data-width="180" data-height="180" data-min="0.001" data-max="1" data-step="0.001" data-precision="3"></span>
+        <!-- span class="dial"></span -->
         <div>
           <div class="ival" style="width:80px;text-align:center;font-size:50px;color:#AAA">0</div>
         </div>
-      </div>
     </body>
   </html>
