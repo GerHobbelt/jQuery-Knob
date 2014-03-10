@@ -423,7 +423,7 @@
 
         this.draw = function (color) {
             var c = this.ctx; // context
-            var r2 = this.radius / 2;
+            var r2 = ( this.radius / 2 ) >> 0;
 
             c.clearRect(0, 0, this.w, this.h);
 
@@ -433,7 +433,7 @@
 
               c.beginPath();
                 c.arc(this.xy, this.xy + 1, this.radius, 0, this.PI2, false);
-                c.moveTo(this.xy + r2, this.xy);
+                c.moveTo(this.xy + r2, this.xy + 1);
                 c.arc(this.xy, this.xy + 1, r2, this.PI2, 0, true);
               c.stroke();
               c.fill();
