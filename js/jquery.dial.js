@@ -196,11 +196,7 @@
                 // if(self.ctx.isPointInPath(e.offsetX, e.offsetY)){
                   var v = self.xy2val( e.originalEvent.touches[self.t].pageX, e.originalEvent.touches[self.t].pageY);
                   if (v == self.cv) return;
-                  if(self.options.type == 'dial'){
-                    self.doDial(v);
-                  }else{
-                    self.draw(v);
-                  }
+                  self.doDial(v);
                 // }
             };
 
@@ -216,7 +212,12 @@
 
             // get touches index
             this.t = k.c.t(e);
-            self.draw(self.options.dialColor);
+            if(self.options.type === 'dial'){
+              self.draw(self.options.dialColor);
+            }else{
+              // first click
+              touchMove(e);
+            }
 
             // Touch events listeners
             // but for the touch move and up has to listen to the $document
