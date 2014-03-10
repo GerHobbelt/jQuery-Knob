@@ -6,17 +6,20 @@
         <script src="js/jquery.dial.js"></script>
         <script>
             $(function($) {
-              var dial = $(".dial").dial({change : function (v) { $('.ival').html(v); } })
-              dial.tempo(0.5);
+              $("#guage").dial({change : function (v) { $('.ival').html(v); } });
+              $("#dial").dial({change : function (v) { $('.ival').html(v); } });
             });
         </script>
     </head>
     <body>
-        <p>iPod click wheel</p>
-        <span class="dial" data-width="180" data-height="180" data-min="0.001" data-max="1" data-step="0.001" data-precision="3"></span>
-        <!-- span class="dial"></span -->
+        <span id="guage" data-type="guage" data-value="0.2" data-width="180" data-height="90" data-min="0.001" data-max="1" data-step="0.001" data-precision="3"></span>
+
         <div>
+          <p>Callback change() after release mouse or touch end</p>
           <div class="ival" style="width:80px;text-align:center;font-size:50px;color:#AAA">0</div>
         </div>
+
+        <span id="dial" data-width="180" data-height="180" data-value="80"></span>
+
     </body>
   </html>

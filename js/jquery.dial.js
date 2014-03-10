@@ -55,6 +55,7 @@
         this.options = null;
         this.$ = null; // jQuery wrapped element
         this.span = null; // HTML Element
+        this.v = 0; // the value, committed value
         this.cv = null; // change value ; not commited value
         this.x = 0; // canvas x position
         this.y = 0; // canvas y position
@@ -70,9 +71,15 @@
             this.$.data('kontroled', true);
 
             this.options = $.extend({
+                    // type
+                    type: this.$.data('type') !== undefined ? (this.$.data('type') === 'guage' ? 'guage' : 'dial') : 'dial',
+
                     // Config
                     min : this.$.data('min') !== undefined ? this.$.data('min') : 30,
                     max : this.$.data('max') !== undefined ? this.$.data('max') : 300,
+                    val: this.$.data('value') != undefined ? this.$.data('value') : 0,
+                    step : this.$.data('step') || 1,
+                    precision : this.$.data('precision') || 0,
 
                     lineWidth : (this.$.data('lineWidth') && Math.max(Math.min(this.$.data('lineWidth'), 1), 0.01)) || 2,
                     width : this.$.data('width') || 150,
@@ -84,8 +91,6 @@
                     dialColor : this.$.data('dialcolor') || '#CC0073',
                     fgColor : this.$.data('fgcolor') || '#1184D3',
 
-                    step : this.$.data('step') || 1,
-                    precision : this.$.data('precision') || 0,
                 }, this.options );
 
             this.span = this.$;
@@ -116,51 +121,60 @@
             //
             //      Author: Eric Bidelman (ericbidelman@chromium.org)
             // -->
-            var hal = $('<div style="'
-                + (this.options.inline ? 'display:inline;' : 'display:block;')
-                + 'width:' +(this.options.width + 30)+ 'px;height:' +(this.options.height + 30) + 'px;'
-                + 'background: -webkit-linear-gradient(left, transparent, #fff 40%, #fff 45%, #fff 55%, #fff 60%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), #3c3734;'
-                + 'background-size: 75% 50%, 50% 100%, 50% 100%, 100% 100%;'
-                + 'background-position: 50% top, right -50px, left -50px, 50% 50%;'
-                + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
-                + 'display: -webkit-box;'
-                + '-webkit-box-align: center;'
-                + '-webkit-box-pack: center;'
-                + 'box-shadow: 0 5px 20px black;'
-                + 'border-radius: 50%;">'
-                + '</div>');
+            if(this.options.type === 'dial'){
+              var hal = $('<div style="'
+                  + (this.options.inline ? 'display:inline;' : 'display:block;')
+                  + 'width:' +(this.options.width + 30)+ 'px;height:' +(this.options.height + 30) + 'px;'
+                  + 'background: -webkit-linear-gradient(left, transparent, #fff 40%, #fff 45%, #fff 55%, #fff 60%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), #3c3734;'
+                  + 'background-size: 75% 50%, 50% 100%, 50% 100%, 100% 100%;'
+                  + 'background-position: 50% top, right -50px, left -50px, 50% 50%;'
+                  + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
+                  + 'display: -webkit-box;'
+                  + '-webkit-box-align: center;'
+                  + '-webkit-box-pack: center;'
+                  + 'box-shadow: 0 5px 20px black;'
+                  + 'border-radius: 50%;">'
+                  + '</div>');
 
-            var inner1 = $('<div id="inner1" style="'
-                + 'background: -webkit-linear-gradient(left, transparent, transparent 32%, white 45%, white 50%, white 55%, transparent 68%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(top, #b5a5a8, #92807e);'
-                + 'background-size: 100% 50%, 50% 100%, 50% 100%, 100% 100%;'
-                + 'background-position: 50% bottom, left 50px, right 50px, center center;'
-                + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
-                + 'width: 95%;'
-                + 'height: 95%;'
-                + '-webkit-box-pack: center;'
-                + '-webkit-box-align: center;'
-                + 'display: -webkit-box;'
-                + 'border-radius: 50%;">'
-                + '</div>');
+              var inner1 = $('<div id="inner1" style="'
+                  + 'background: -webkit-linear-gradient(left, transparent, transparent 32%, white 45%, white 50%, white 55%, transparent 68%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(top, #b5a5a8, #92807e);'
+                  + 'background-size: 100% 50%, 50% 100%, 50% 100%, 100% 100%;'
+                  + 'background-position: 50% bottom, left 50px, right 50px, center center;'
+                  + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
+                  + 'width: 95%;'
+                  + 'height: 95%;'
+                  + '-webkit-box-pack: center;'
+                  + '-webkit-box-align: center;'
+                  + 'display: -webkit-box;'
+                  + 'border-radius: 50%;">'
+                  + '</div>');
 
-            var inner2 = $('<div id="inner2" style="'
-                + 'width: 90%;'
-                + 'height: 91%;'
-                + 'background: -webkit-radial-gradient(50% 50%, circle, #2795f6, #0072fd 5%, #413bd4 20%,  #440003 45%, black 63%);'
-                + 'background-repeat: no-repeat, no-repeat, no-repeat;'
-                + 'background-size: 76% 100%, 55% 100%, 100%, 100%;'
-                + 'background-position: 50% 12%, 27% 8px, center center;'
-                + 'overflow: hidden;'
-                + 'background-color: black;'
-                + '-webkit-box-pack: center;'
-                + '-webkit-box-align: center;'
-                + 'display: -webkit-box;'
-                + 'border-radius: 50%;">'
-                + '</div>');
+              var inner2 = $('<div id="inner2" style="'
+                  + 'width: 90%;'
+                  + 'height: 91%;'
+                  + 'background: -webkit-radial-gradient(50% 50%, circle, #2795f6, #0072fd 5%, #413bd4 20%,  #440003 45%, black 63%);'
+                  + 'background-repeat: no-repeat, no-repeat, no-repeat;'
+                  + 'background-size: 76% 100%, 55% 100%, 100%, 100%;'
+                  + 'background-position: 50% 12%, 27% 8px, center center;'
+                  + 'overflow: hidden;'
+                  + 'background-color: black;'
+                  + '-webkit-box-pack: center;'
+                  + '-webkit-box-align: center;'
+                  + 'display: -webkit-box;'
+                  + 'border-radius: 50%;">'
+                  + '</div>');
 
-            this.$.wrap(inner2).before(this.canvas);
-            $("#inner2").wrap(inner1);
-            $("#inner1").wrap(hal);
+              this.$.wrap(inner2).before(this.canvas);
+              $("#inner2").wrap(inner1);
+              $("#inner1").wrap(hal);
+            }else{
+              this.$div = $('<div style="'
+                  + (this.options.inline ? 'display:inline;' : '')
+                  + 'width:' + this.options.width + 'px;height:' + this.options.height + 'px;'
+                  + '"></div>');
+
+              this.$.wrap(this.$div).before(this.canvas);
+            }
 
             this.ctx = this.canvas[0].getContext ? this.canvas[0].getContext('2d') : null;
 
@@ -182,16 +196,22 @@
                 // if(self.ctx.isPointInPath(e.offsetX, e.offsetY)){
                   var v = self.xy2val( e.originalEvent.touches[self.t].pageX, e.originalEvent.touches[self.t].pageY);
                   if (v == self.cv) return;
-                  self.dialTempo(self._validate(v));
+                  if(self.options.type == 'dial'){
+                    self.doDial(v);
+                  }else{
+                    self.draw(v);
+                  }
                 // }
             };
 
             var touchEnd = function(e){
               k.c.d.unbind('touchmove.k touchend.k');
               // clear the color
-              self.draw();
+              if(self.options.type === 'dial'){
+                self.draw();
+              }
               // call hook
-              if (self.options.change) self.options.change(self.val);
+              if (self.options.change) self.options.change(self.val());
             };
 
             // get touches index
@@ -219,18 +239,25 @@
                 if(self.ctx.isPointInPath(e.offsetX, e.offsetY)){
                   var v = self.xy2val(e.pageX, e.pageY);
                   if (v == self.cv) return;
-                  self.dialTempo(self._validate(v));
+                  self.doDial(v);
                 }
             };
             var mouseUp = function (e) {
                 k.c.d.unbind('mousemove.k mouseup.k');
                 // clear the highlight color
-                self.draw();
+                if(self.options.type === 'dial'){
+                  self.draw();
+                }
                 // call hook
-                if (self.options.change) self.options.change(self.val);
+                if (self.options.change) self.options.change(self.val());
             };
 
-            self.draw(self.options.dialColor);
+            if(self.options.type === 'dial'){
+              self.draw(self.options.dialColor);
+            }else{
+              // first click
+              mouseMove(e);
+            }
 
             // but for the mouse move and up has to listen to the $document
             k.c.d
@@ -253,8 +280,10 @@
           self.taps.push(current);
           len += 1;
 
-          if(len < 4){
-            self.$.text('...'.slice(0, len));
+          var mod = len % 4;
+          if(mod > 0){
+            self.$.text('...'.slice(0, mod));
+            self.drawText("keep tapping", Math.PI * 0.8);
             return false;
           }
 
@@ -272,11 +301,12 @@
 
           // set the new temp every 4 taps
           // lot of consideration, e.g. the performace when combined with several timer on the same page
-          var mod = len % 4;
           if(mod == 0){
-            self.val = interval;
+            self.val(interval);
             self.$.text(interval);
-            if (self.options.change) self.options.change(self.val); // call back hook
+            // clear the text
+            self.draw();
+            if (self.options.change) self.options.change(self.val()); // call back hook
           }
 
           // we don't want to crew too many taps, trim them off
@@ -288,76 +318,64 @@
 
         this._listen = function () {
             var mobile = k.c.m();
-
+            // canvas listen to mouse down event on canvas only
             if(mobile){
-              // canvas listen to mouse down event on canvas only
               this.canvas.bind("touchstart", function (e) { e.preventDefault(); self._xy()._touch(e); });
-              this.span.bind("touchend", this.calculateTempo); // calculate by taps
+              if(this.options.type === 'dial')
+                this.span.bind("touchend", this.calculateTempo); // calculate by taps
             }else{
               this.canvas.bind("mousedown", function (e) {e.preventDefault();self._xy()._mouse(e);});
-              this.span.bind("click", this.calculateTempo); // calculate by clicks
+              if(this.options.type === 'dial')
+                this.span.bind("click", this.calculateTempo); // calculate by clicks
             }
 
             return this;
         };
-
-        this._validate = function(v) {
-            return (~~ (((v < 0) ? -0.5 : 0.5) + (v/this.options.step))) * this.options.step;
-        };
-
-        this.copy = function (f, t) {
-            for (var i in f) { t[i] = f[i]; }
-        };
     };
 
-
     /**
-     * k.Dial
+     * k.Dial - UI
      */
     k.Dial = function (options) {
         k.obj.call(this);
         this.options = options;
 
-        this.val = 0;
         this.xy = null;
         this.radius = null;
         this.lineWidth = null;
         this.w2 = null;
         this.PI2 = 2*Math.PI;
 
-        // public api setter/getter
-        this.tempo = function(val){
-          if(null != val){
-            if ( val < this.options.min || val > this.options.max) val = this.options.min;
-          }else{
-            return this.val;
-          }
-          this.val = val;
-          this.$.text(val);
-        }
-
         this.xy2val = function (x, y) {
             var a, ret;
-            a = Math.atan2( x - (this.x + this.w2) , - (y - this.y - this.w2));
-            if (a < 0) { a += this.PI2; }
-            // ret = ~~ (0.5 + (a * (this.options.max - this.options.min) / this.PI2)) + this.options.min;
-            ret = ~~ (0.5 + (a * (60 - 20) / this.PI2)) + 20;
+            if(this.options.type === 'dial'){
+              a = Math.atan2( x - (this.x + this.w2) , - (y - this.y - this.w2));
+              if (a < 0) { a += this.PI2; }
+              ret = ~~ (0.5 + (a * (60 - 20) / this.PI2)) + 20;
+            }else{
+              a = Math.atan2( x - (this.x + this.w2) , - (y - this.y - this.w2)) + Math.PI;
+              ret = (a * (this.options.max - this.options.min) / Math.PI) + this.options.min - 0.5;
+              ret = Math.max(Math.min(ret, this.options.max), this.options.min);
+            }
+
             return ret;
         };
 
         this.init = function () {
+            this.val(this.options.val);
             this.w2 = this.w / 2;
             this.xy = this.w2;
             this.lineWidth = this.options.lineWidth;
             this.radius = this.xy - this.lineWidth / 2;
 
             var len = Math.max(String(Math.abs(this.options.max)).length, String(Math.abs(this.options.min)).length, 2) + 3;
+            var mtop = (this.w / 2 - this.w / len / 2 + 1) >> 0;
             this.span.css({
                         'width' : ((this.w / 2 + 4) >> 0) + 'px'
-                        ,'height' : ((this.w / 3) >> 0) + 'px'
+                        // ,'height' : ((this.w / 3) >> 0) + 'px'
                         ,'position' : 'absolute'
                         ,'vertical-align' : 'middle'
-                        ,'margin-top' : ((this.w / 2 - this.w / len / 2 + 1) >> 0) + 'px'
+                        ,'margin-top' :  this.options.type === 'dial' ? mtop + 'px' : (mtop - 8) + 'px'
                         ,'margin-left' : '-' + ((this.w * 3 / 4 + 2) >> 0) + 'px'
                         ,'border' : 0
                         ,'background' : 'none'
@@ -369,40 +387,108 @@
                         ,'-webkit-user-select': 'none' // do not select when double click/tap
             });
 
-            this.tempo(80);
-
             return this;
         };
 
-        this.dialTempo = function (v) {
-            var tmp = this.val;
-            if(v > this.cv){
-                tmp += this.options.step;
-                tmp = tmp > this.options.max ? this.options.max : tmp;
-            } else {
-                tmp -= this.options.step;
-                tmp = tmp < this.options.min ? this.options.min : tmp;
-            }
-            this.cv = v;
-
-            this.val = parseFloat(tmp.toFixed(this.options.precision));
-            this.$.text(this.val);
+        this.val = function(v){
+          if(v === undefined){
+            return this.v;
+          }else{
+            v = parseFloat(v.toFixed(this.options.precision));
+            this.v = Math.min(Math.max(v, this.options.min), this.options.max)
+          }
         };
 
-        this.draw = function (fillColor) {
+        this.doDial = function (v) {
+            if(this.options.type == 'dial'){
+              v = (~~ (((v < 0) ? -0.5 : 0.5) + (v/this.options.step))) * this.options.step;
+              var tmp = this.val();
+              if(v > this.cv){
+                  tmp += this.options.step;
+                  tmp = tmp > this.options.max ? this.options.max : tmp;
+              } else {
+                  tmp -= this.options.step;
+                  tmp = tmp < this.options.min ? this.options.min : tmp;
+              }
+
+              this.cv = v;
+              v = parseFloat(tmp.toFixed(this.options.precision));
+              this.val(v);
+            }else{
+              this.val(v);
+              this.draw()
+            }
+            this.$.text(this.val());
+        };
+
+        this.draw = function (color) {
             var c = this.ctx; // context
             var r2 = this.radius / 2;
 
-            c.lineWidth = this.lineWidth;
-            c.fillStyle = fillColor || this.options.fgColor;
+            c.clearRect(0, 0, this.w, this.h);
 
-            c.beginPath();
-              c.arc(this.xy, this.xy + 1, this.radius, 0, this.PI2, false);
-              c.moveTo(this.xy + r2, this.xy);
-              c.arc(this.xy, this.xy + 1, r2, this.PI2, 0, true);
-            c.stroke();
-            c.fill();
+            if(this.options.type == 'dial'){
+              c.lineWidth = this.lineWidth;
+              c.fillStyle = color || this.options.fgColor;
+
+              c.beginPath();
+                c.arc(this.xy, this.xy + 1, this.radius, 0, this.PI2, false);
+                c.moveTo(this.xy + r2, this.xy);
+                c.arc(this.xy, this.xy + 1, r2, this.PI2, 0, true);
+              c.stroke();
+              c.fill();
+            }else{
+              c.lineWidth = this.radius / 2;
+
+              // half arc
+              c.strokeStyle = "#cdcdcd";
+              c.beginPath();
+                c.arc(this.xy, this.xy, this.radius / 4 * 3, Math.PI, 0, false);
+              c.stroke();
+
+              // amount
+              c.strokeStyle = "#00aa00";
+              var ang = (this.val() - this.options.min) / (this.options.max - this.options.min) * Math.PI;
+              c.beginPath();
+                c.arc(this.xy, this.xy, this.radius / 4 * 3, Math.PI, Math.PI + ang, false);
+              c.stroke();
+
+              // touch or mouse control area
+              c.lineWidth = 1;
+              c.strokeStyle = "#1184d3";
+              c.beginPath();
+                c.arc(this.xy, this.xy, this.radius, Math.PI, 0, false);
+                c.lineTo(this.xy + r2, this.xy);
+                c.arc(this.xy, this.xy, r2, 0, Math.PI, true);
+              c.closePath();
+              c.stroke();
+            }
+            this.$.text(this.val());
         };
+
+        this.drawText = function(str, angle) {
+          var context = this.ctx;
+          var radius = this.radius / 2 + 8;
+          var len = str.length, s;
+
+          context.font = this.options.fontWeight + ' ' + ((this.w / len) >> 0) + ' ' + this.options.font
+          context.textAlign = 'center';
+          context.fillStyle = '#cdcdcd';
+
+          context.save();
+          context.translate(this.xy, this.xy);
+          context.rotate(-1 * angle / 2);
+          context.rotate(-1 * (angle / len) / 2);
+          for(var n = 0; n < len; n++) {
+            context.rotate(angle / len);
+            context.save();
+            context.translate(0, -1 * radius);
+            s = str[n];
+            context.fillText(s, 0, 0);
+            context.restore();
+          }
+          context.restore();
+        }
     };
 
     $.fn.dial = function (options) {
