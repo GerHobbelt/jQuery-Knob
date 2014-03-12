@@ -346,6 +346,7 @@
         this.lineWidth = null;
         this.w2 = null;
         this.PI2 = 2*Math.PI;
+        this.PI_2 = Math.PI * 0.5;
 
         this.xy2val = function (x, y) {
             var a, ret;
@@ -354,8 +355,16 @@
               if (a < 0) { a += this.PI2; }
               ret = ~~ (0.5 + (a * (60 - 20) / this.PI2)) + 20;
             }else{
-              a = Math.atan2( x - (this.x + this.w2) , - (y - this.y - this.w2)) + Math.PI;
-              ret = (a * (this.options.max - this.options.min) / Math.PI) + this.options.min - 0.5;
+              // console.log("x = %s", -(y-this.y-this.w2));
+              // console.log("y = %s", x -(this.x + this.w2));
+              //                      ^x
+              //                      |
+              //                      |
+              //            ------------------->y
+              a = Math.atan2( x - (this.x + this.w2) , - (y - this.y - this.w2)) + this.PI_2;
+              // console.log("in arc %s", a);
+              // Why Math.PI? I only care about half of the circle, like the guage
+              ret = (a * (this.options.max - this.options.min) / Math.PI) + this.options.min;
               ret = Math.max(Math.min(ret, this.options.max), this.options.min);
             }
 

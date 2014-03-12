@@ -6,13 +6,15 @@
         <script src="js/jquery.dial.js"></script>
         <script>
             $(function($) {
+              $("#guage0").dial({change : function (v) { $('.ival').html(v); } });
               $("#guage").dial({change : function (v) { $('.ival').html(v); } });
               $("#dial").dial({change : function (v) { $('.ival').html(v); } });
             });
         </script>
     </head>
     <body>
-        <span id="guage" data-type="guage" data-value="0.2" data-width="180" data-height="90" data-min="0.001" data-max="1" data-step="0.001" data-precision="3"></span>
+        <span id="guage0" data-type="guage" data-value="0.2" data-width="180" data-height="90" data-min="0.001" data-max="1" data-precision="3"></span>
+        <span id="guage" data-type="guage" data-value="80" data-width="180" data-height="90"></span>
 
         <div>
           <p>Callback change() after release mouse or touch end</p>
