@@ -75,11 +75,12 @@
                     type: this.$.data('type') !== undefined ? (this.$.data('type') === 'guage' ? 'guage' : 'dial') : 'dial',
 
                     // Config
-                    min : this.$.data('min') !== undefined ? this.$.data('min') : 30,
-                    max : this.$.data('max') !== undefined ? this.$.data('max') : 300,
+                    min: this.$.data('min') !== undefined ? this.$.data('min') : 30,
+                    max: this.$.data('max') !== undefined ? this.$.data('max') : 300,
                     val: this.$.data('value') != undefined ? this.$.data('value') : 0,
-                    step : this.$.data('step') || 1,
-                    precision : this.$.data('precision') || 0,
+                    step: this.$.data('step') || 1,
+                    precision: this.$.data('precision') || 0,
+                    txt: this.$.data('txt') || '',
 
                     lineWidth : (this.$.data('lineWidth') && Math.max(Math.min(this.$.data('lineWidth'), 1), 0.01)) || 2,
                     width : this.$.data('width') || 150,
@@ -472,6 +473,8 @@
                 c.arc(this.xy, this.xy, r2, 0, Math.PI, true);
               c.closePath();
               c.stroke();
+
+              this.drawText(this.options.txt, Math.PI * 0.8);
             }
             this.$.text(this.val());
         };
@@ -483,7 +486,7 @@
 
           context.font = this.options.fontWeight + ' ' + ((this.w / len) >> 0) + ' ' + this.options.font
           context.textAlign = 'center';
-          context.fillStyle = '#cdcdcd';
+          context.fillStyle = '#ffffff';
 
           context.save();
           context.translate(this.xy, this.xy);
