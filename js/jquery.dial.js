@@ -123,7 +123,7 @@
             //      Author: Eric Bidelman (ericbidelman@chromium.org)
             // -->
             if(this.options.type === 'dial'){
-              var hal = $('<div style="'
+              var hal = $('<div style="' // === hal ===
                   + (this.options.inline ? 'display:inline;' : 'display:block;')
                   + 'width:' +(this.options.width + 30)+ 'px;height:' +(this.options.height + 30) + 'px;'
                   + 'background: -webkit-linear-gradient(left, transparent, #fff 40%, #fff 45%, #fff 55%, #fff 60%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 35%, white 50%, transparent 65%, transparent), #3c3734;'
@@ -135,45 +135,47 @@
                   + '-webkit-box-pack: center;'
                   + 'box-shadow: 0 5px 20px black;'
                   + 'border-radius: 50%;">'
+                    + '<div style="' // === inner 1 ===
+                      + 'background: -webkit-linear-gradient(left, transparent, transparent 32%, white 45%, white 50%, white 55%, transparent 68%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(top, #b5a5a8, #92807e);'
+                      + 'background-size: 100% 50%, 50% 100%, 50% 100%, 100% 100%;'
+                      + 'background-position: 50% bottom, left 50px, right 50px, center center;'
+                      + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
+                      + 'width: 95%;'
+                      + 'height: 95%;'
+                      + '-webkit-box-pack: center;'
+                      + '-webkit-box-align: center;'
+                      + 'display: -webkit-box;'
+                      + 'border-radius: 50%;">'
+                      + '<div style="' // === inner 2 ===
+                        + 'width: 90%;'
+                        + 'height: 91%;'
+                        + 'background: -webkit-radial-gradient(50% 50%, circle, #2795f6, #0072fd 5%, #413bd4 20%,  #440003 45%, black 63%);'
+                        + 'background-repeat: no-repeat, no-repeat, no-repeat;'
+                        + 'background-size: 76% 100%, 55% 100%, 100%, 100%;'
+                        + 'background-position: 50% 12%, 27% 8px, center center;'
+                        + 'overflow: hidden;'
+                        + 'background-color: black;'
+                        + '-webkit-box-pack: center;'
+                        + '-webkit-box-align: center;'
+                        + 'display: -webkit-box;'
+                        + 'border-radius: 50%;">'
+                        + '</div>'
+                    + '</div>'
                   + '</div>');
-
-              var inner1 = $('<div id="inner1" style="'
-                  + 'background: -webkit-linear-gradient(left, transparent, transparent 32%, white 45%, white 50%, white 55%, transparent 68%, transparent), -webkit-linear-gradient(-45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(45deg, transparent, transparent 40%, white 50%, transparent 60%, transparent), -webkit-linear-gradient(top, #b5a5a8, #92807e);'
-                  + 'background-size: 100% 50%, 50% 100%, 50% 100%, 100% 100%;'
-                  + 'background-position: 50% bottom, left 50px, right 50px, center center;'
-                  + 'background-repeat: no-repeat, no-repeat, no-repeat, repeat;'
-                  + 'width: 95%;'
-                  + 'height: 95%;'
-                  + '-webkit-box-pack: center;'
-                  + '-webkit-box-align: center;'
-                  + 'display: -webkit-box;'
-                  + 'border-radius: 50%;">'
-                  + '</div>');
-
-              var inner2 = $('<div id="inner2" style="'
-                  + 'width: 90%;'
-                  + 'height: 91%;'
-                  + 'background: -webkit-radial-gradient(50% 50%, circle, #2795f6, #0072fd 5%, #413bd4 20%,  #440003 45%, black 63%);'
-                  + 'background-repeat: no-repeat, no-repeat, no-repeat;'
-                  + 'background-size: 76% 100%, 55% 100%, 100%, 100%;'
-                  + 'background-position: 50% 12%, 27% 8px, center center;'
-                  + 'overflow: hidden;'
-                  + 'background-color: black;'
-                  + '-webkit-box-pack: center;'
-                  + '-webkit-box-align: center;'
-                  + 'display: -webkit-box;'
-                  + 'border-radius: 50%;">'
-                  + '</div>');
-
-              this.$.wrap(inner2).before(this.canvas);
-              $("#inner2").wrap(inner1);
-              $("#inner1").wrap(hal);
+              this.$.wrap(hal).before(this.canvas);
             }else{
               this.$div = $('<div style="'
                   + (this.options.inline ? 'display:inline;' : '')
                   + 'width:' + this.options.width + 'px;height:' + this.options.height + 'px;'
                   + '"></div>');
 
+              /*
+              this.$div = $('<div style="'
+                  + (this.options.inline ? 'display:inline;' : '')
+                  + 'width:' + this.options.width + 'px;height:' + this.options.height + 'px;'
+                  + 'margin: 0.2em; min-height: 2em; padding: 0.3em; width: 25%; text-align: center;'
+                  + '"></div>');
+              */
               this.$.wrap(this.$div).before(this.canvas);
             }
 
@@ -486,6 +488,7 @@
 
           context.font = this.options.fontWeight + ' ' + ((this.w / len) >> 0) + ' ' + this.options.font
           context.textAlign = 'center';
+          // context.fillStyle = '#cdcdcd';
           context.fillStyle = '#ffffff';
 
           context.save();
