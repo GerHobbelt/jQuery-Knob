@@ -409,6 +409,7 @@
           }else{
             v = parseFloat(v.toFixed(this.options.precision));
             this.v = Math.min(Math.max(v, this.options.min), this.options.max)
+            this.$.text(this.val());
           }
         };
 
