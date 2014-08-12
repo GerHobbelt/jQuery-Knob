@@ -6,7 +6,6 @@
   "license": "MIT",
   "ignore": [],
   "dependencies": {
-    "jquery": "1.7.0"
   },
   "main": [
     "js/jquery.dial.js"
